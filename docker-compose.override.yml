@@ -3,12 +3,21 @@ version: '3.4'
 services:
 
   catalogdb:
-        container_name: catalogdb
-        restart: always
-        volumes:
-                - ${WEBAPP_STORAGE_HOME}/site:/data/db
-        ports:
-                - "27017:27017" 
+                     container_name: catalogdb
+                     restart: always
+                     volumes:
+                            - ${WEBAPP_STORAGE_HOME}/site:/data/db
+                     ports:
+                            - "27017:27017" 
+
+
+  basketdb:
+                     container_name: basketdb
+                     restart: always
+                     ports:
+                            - "6379:6379" 
+
+
 
 
   catalog.api:
@@ -19,3 +28,15 @@ services:
             - catalogdb 
         ports:
             - "7000:80"
+
+
+
+  basket.api:
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - "ConnectionStrings:Redis=basketdb:6379"
+        depends_on:
+            - basketdb 
+        ports:
+            - "7001:80"
+
